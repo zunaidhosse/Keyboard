@@ -1,0 +1,33 @@
+{
+  "name": "Digital Notepad PWA",
+  "short_name": "Notepad",
+  "description": "A digital notepad with typing simulation and offline support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffef7",
+  "theme_color": "#b71c1c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "540x960",
+      "type": "image/png"
+    }
+  ]
+}
+

@@ -1,0 +1,595 @@
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Kalam', cursive;
+    background: #f5f5dc;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.notepad-container {
+    width: 100%;
+    height: 100%;
+    background: #fffef7;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.notepad-paper {
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(
+            transparent,
+            transparent 40px,
+            #e0d5c7 40px,
+            #e0d5c7 41px
+        );
+    padding: 60px 40px 40px 80px;
+    position: relative;
+}
+
+.notepad-paper::before {
+    content: '';
+    position: absolute;
+    left: 60px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #ff6b6b;
+}
+
+.notepad-paper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.menu-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.menu-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.menu-button:active {
+    transform: scale(0.95);
+}
+
+.menu-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.menu-dot {
+    width: 4px;
+    height: 4px;
+    background: #333;
+    border-radius: 50%;
+}
+
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.dialog-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dialog-box {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    max-width: 90%;
+    width: 400px;
+}
+
+.dialog-overlay.active .dialog-box {
+    transform: scale(1);
+}
+
+.dialog-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #e0d5c7;
+    border-radius: 8px;
+    font-family: 'Kalam', cursive;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.dialog-input:focus {
+    outline: none;
+    border-color: #ff6b6b;
+}
+
+.input-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.char-counter {
+    font-weight: 600;
+}
+
+.typing-indicator {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-style: italic;
+    color: #ff6b6b;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.dialog-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Kalam', cursive;
+}
+
+.dialog-button.primary {
+    background: #ff6b6b;
+    color: white;
+}
+
+.dialog-button.primary:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+}
+
+.dialog-button.secondary {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.dialog-button.secondary:hover {
+    background: #e0e0e0;
+}
+
+.typed-text {
+    font-size: 24px;
+    line-height: 41px;
+    color: #333;
+    min-height: 41px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 24px;
+    background: #333;
+    animation: blink 1s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.virtual-keyboard {
+    position: fixed;
+    bottom: -400px;
+    left: 0;
+    right: 0;
+    background: #b71c1c;
+    border-radius: 24px 24px 0 0;
+    padding: 16px 12px;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
+    transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+.virtual-keyboard.active {
+    bottom: 0;
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    justify-content: center;
+}
+
+.keyboard-key {
+    background: #d32f2f;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px;
+    min-width: 36px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.keyboard-key:active,
+.keyboard-key.pressed {
+    background: #f44336;
+    transform: scale(0.92);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.keyboard-key.space {
+    min-width: 180px;
+    background: #c62828;
+}
+
+.keyboard-key.enter {
+    min-width: 80px;
+    background: #4caf50;
+}
+
+.keyboard-key.enter:active,
+.keyboard-key.enter.pressed {
+    background: #66bb6a;
+}
+
+.keyboard-key::after {
+    content: attr(data-key);
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    font-size: 10px;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
+.keyboard-key.space::after,
+.keyboard-key.enter::after {
+    display: none;
+}
+
+.key-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    transform: scale(0);
+    animation: ripple 0.3s ease-out;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.speed-control {
+    margin-bottom: 20px;
+}
+
+.speed-label {
+    display: block;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.speed-options {
+    display: flex;
+    gap: 10px;
+}
+
+.speed-option {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #d32f2f;
+    background: transparent;
+    color: #d32f2f;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Kalam', cursive;
+}
+
+.speed-option:hover {
+    background: rgba(211, 47, 47, 0.1);
+}
+
+.speed-option.active {
+    background: #d32f2f;
+    color: white;
+}
+
+.speed-option.active:hover {
+    background: #b71c1c;
+}
+
+.clear-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 107, 107, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.clear-button:hover {
+    transform: scale(1.1);
+    background: rgba(255, 82, 82, 0.95);
+}
+
+.clear-button:active {
+    transform: scale(0.95);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.typed-text span:not(.cursor) {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Add this new animation for mistaken characters */
+@keyframes mistakeShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
+}
+
+.keyboard-key.mistake {
+    animation: mistakeShake 0.2s ease-in-out;
+    background: #ff9800 !important;
+}
+
+/* Add backspace key styling */
+.keyboard-key.backspace {
+    min-width: 60px;
+    background: #ff5722;
+}
+
+.keyboard-key.backspace:active,
+.keyboard-key.backspace.pressed {
+    background: #ff7043;
+}
+
+/* PWA-specific styles */
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.install-prompt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    z-index: 2000;
+    display: none;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+}
+
+.install-content h2 {
+    color: #b71c1c;
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.install-content p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.install-button {
+    background: #b71c1c;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.install-button:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.dismiss-button {
+    background: transparent;
+    color: #666;
+    border: 2px solid #e0d5c7;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dismiss-button:hover {
+    border-color: #b71c1c;
+    color: #b71c1c;
+}
+
+.connection-status {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.9);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.status-indicator.online {
+    background: #4caf50;
+}
+
+.status-indicator.offline {
+    background: #ff9800;
+}
+
+#statusText {
+    font-weight: 500;
+    color: #333;
+}
+
+/* PWA display mode adjustments */
+@media (display-mode: standalone) {
+    body {
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    
+    .install-prompt {
+        display: none !important;
+    }
+}
+
+/* iOS PWA specific styles */
+@supports (-webkit-touch-callout: none) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+@media (max-width: 768px) {
+    .notepad-paper {
+        padding: 40px 20px 20px 60px;
+    }
+    
+    .dialog-box {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .virtual-keyboard {
+        padding: 12px 8px;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+    
+    .keyboard-key {
+        min-width: 30px;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+    
+    .keyboard-key.space {
+        min-width: 140px;
+    }
+}
